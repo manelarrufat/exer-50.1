@@ -1,0 +1,129 @@
+<?php
+/**
+* @file
+* Módulo Nodes Forcontu
+* Este creará el tipo de contenido Mi Producto
+*/
+
+/**
+ * Implements hook_node_info().
+ */
+function nodes_forcontu_node_info() {
+  return array(
+    'myproduct' => array(
+      'name' => t('My product'),
+      'base' => 'nodes_forcontu',
+      'description' => t('Example node type'),
+      'title_label' => t('Product name'),
+    )
+  );
+}
+
+/**
+ * Implements hook_form().
+ */
+function nodes_forcontu_form($node, &$form_state) {
+  $type = node_type_get_type($node);
+
+  if ($type->has_title) {
+    $form['title'] = array(
+      '#type' => 'textfield',
+      '#title' => check_plain($type->title_label),
+      '#required' => TRUE,
+      '#default_value' => !(empty($node->title)) ? $node->title : '',
+      '#maxlength' => 255,
+      '#weight' => -5,
+    );
+  }
+
+  $form['information'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Product information'),
+    '#collapsible' => TRUE,
+    '#collapsed' => FALSE,
+    '#weight' => 99,
+    '#group' => 'additional_settings',
+  );
+
+  $form['information']['price'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Price'),
+    '#required' => FALSE,
+    '#default_value' => isset($node->price) ? $node->price : 0,
+    '#description' => t("Product's price (Euro)."),
+    '#weight' => 1,
+    '#size' => 20,
+    '#maxlength' => 35,
+  );
+
+  $form['information']['weight'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Weight'),
+    '#default_value' => isset($node->weight) ? $node->weight : 0,
+    '#description' => t("Product's weight (Kg)."),
+    '#weight' => 2,
+    '#size' => 10,
+    '#maxlength' => 15,
+  );
+
+  $form['information']['dimensions'] = array(
+    '#type' => 'fieldset',
+    '#title' => t('Dimensions'),
+    '#description' => t('Physical dimensions of the packaged product (cm).'),
+    '#weight' => 3,
+  );
+
+  $form['information']['dimensions']['length'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Length'),
+    '#default_value' => isset($node->length) ? $node->length : '',
+    '#weight' => 1,
+    '#size' => 10,
+  );
+
+  $form['information']['dimensions']['width'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Width'),
+    '#default_value' => isset($node->width) ? $node->width : '',
+    '#weight' => 2,
+    '#size' => 10,
+  );
+
+  $form['information']['dimensions']['height'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Height'),
+    '#default_value' => isset($node->height) ? $node->height : '',
+    '#weight' => 3,
+    '#size' => 10,
+  );
+
+  return $form;
+}
+
+/**
+ * Implements hook_validate().
+ */
+function nodes_forcontu_validate($node, $form, &$form_state) {
+
+  $pattern = '/^\d*(\.\d*)?$/';
+
+  if (!empty($node->price) && !is_numeric($node->price) && !preg_match($pattern, $node->price)) {
+    form_set_error('price', t('Price must be in a valid number format. Not commas and only one decimal point.'));
+  }
+
+  if (!empty($node->weight) && (!is_numeric($node->weight) || $node->weight < 0)) {
+    form_set_error('weight', t('Weight must be a positive number.'));
+  }
+
+  if (!empty($node->length) && (!is_numeric($node->length) || $node->length < 0)) {
+    form_set_error('length', t('Length must be a positive number.'));
+  }
+
+  if (!empty($node->width) && (!is_numeric($node->width) || $node->width < 0)) {
+    form_set_error('width', t('Width must be a positive number.'));
+  }
+
+  if (!empty($node->height) && (!is_numeric($node->height) || $node->height < 0)) {
+    form_set_error('height', t('Height must be a positive number.'));
+  }
+} 

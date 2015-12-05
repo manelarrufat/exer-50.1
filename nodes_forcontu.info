@@ -1,0 +1,6 @@
+name = "Nodes Forcontu"
+description = "Creates a new content type"
+core = 7.x
+files[] = nodes_forcontu.module
+files[] = nodes_forcontu.install
+package = My modules

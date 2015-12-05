@@ -1,0 +1,15 @@
+<?php
+/**
+* @file
+* Módulo Nodes Forcontu
+* Este módulo añadirá el campo Body al tipo de contenido Mi producto
+**/
+
+/**
+ * Implements hook_install().
+ */
+function nodes_forcontu_install() {
+  node_types_rebuild();
+  $types = node_type_get_types();
+  node_add_body_field($types['myproduct'], 'Description');
+}
