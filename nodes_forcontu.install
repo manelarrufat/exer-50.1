@@ -13,3 +13,63 @@ function nodes_forcontu_install() {
   $types = node_type_get_types();
   node_add_body_field($types['myproduct'], 'Description');
 }
+
+/**
+ * Implements hook_uninstall().
+ */
+function nodes_forcontu_uninstall() {
+}
+
+/**
+ * Implements hook_schema().
+ */
+function nodes_forcontu_schema() {
+  $schema['nodes_forcontu'] = array(
+    'description' => 'Almacena los datos del tipo de contenido Mi producto',
+    'fields' => array(
+      'nid' => array(
+        'description' => 'Primary key nid',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+      ),
+      'price' => array(
+        'description' => 'Precio del producto',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'weight' => array(
+        'description' => 'Peso del producto',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'length' => array(
+        'description' => 'Longitud del producto',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'width' => array(
+        'description' => 'Anchura del producto',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'height' => array(
+        'description' => 'Altura del producto',
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+    ),
+    'primary key' => array('nid'),
+  );
+  return $schema;
+}

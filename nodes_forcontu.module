@@ -2,7 +2,7 @@
 /**
 * @file
 * Módulo Nodes Forcontu
-* Este creará el tipo de contenido Mi Producto
+* Este módulo creará el tipo de contenido Mi Producto
 */
 
 /**
@@ -127,3 +127,58 @@ function nodes_forcontu_validate($node, $form, &$form_state) {
     form_set_error('height', t('Height must be a positive number.'));
   }
 } 
+
+/**
+ * Implements hook_insert().
+ */
+function nodes_forcontu_insert($node) {
+  db_insert('nodes_forcontu')
+    ->fields(array(
+      'nid' => $node->nid,
+      'price' => $node->price,
+      'weight' => $node->weight,
+      'length' => $node->length,
+      'width' => $node->width,
+      'height' => $node->height,
+    ))
+    ->execute();
+}
+
+/**
+ * Implements hook_update().
+ */
+function nodes_forcontu_update($node) {
+  db_update('nodes_forcontu')
+    ->fields(array(
+      'price' => $node->price,
+      'weight' => $node->weight,
+      'length' => $node->length,
+      'width' => $node->width,
+      'height' => $node->height,
+    ))
+    ->condition('nid', $node->nid)
+    ->execute();
+}
+
+/**
+ * Implements hook_delete().
+ */
+function nodes_forcontu_delete($node) {
+  db_delete('nodes_forcontu')
+    ->condition('nid', $node->nid)
+    ->execute();
+}
+
+/**
+ * Implements hook_load().
+ */
+function nodes_forcontu_load($nodes) {
+  $result = db_query('SELECT nid, price, weight, length, width, height FROM {nodes_forcontu} WHERE nid IN (:nids)', array(':nids' => array_keys($nodes)));
+  foreach ($result as $record) {
+    $nodes[$record->nid]->price = $record->price;
+    $nodes[$record->nid]->weight = $record->weight;
+    $nodes[$record->nid]->length = $record->length;
+    $nodes[$record->nid]->width = $record->width;
+    $nodes[$record->nid]->height = $record->height;
+  } 
+}
