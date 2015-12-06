@@ -284,3 +284,36 @@ function theme_nodes_forcontu_dimensions($variables) {
   $output .= '</div>';
   return $output;
 }
+
+/**
+ * Implements hook_permission().
+ */
+function nodes_forcontu_permission() {
+  return array(
+    'My product: Delete promoted content' =>  array(
+      'title' => t('My product: Delete promoted content'),
+      'description' => t('Allow delete promoted content of type my product'),
+    ),
+  );
+}
+
+/**
+ * Implements hook_node_access().
+ */
+function nodes_forcontu_node_access($node, $op, $account) {
+  $type = is_string($node) ? $node : $node->type;
+
+  //Deny delete promoted content type myproduct
+  if ($op == 'delete' && $node->promote == 1 && $type == 'myproduct') {
+    if (user_access('My product: Delete promoted content', $account)) { //tiene permisos
+      return NODE_ACCESS_ALLOW;
+    } else {
+      drupal_set_message(t('No tiene permisos para eliminar este contenido.'));
+      return NODE_ACCESS_DENY;
+    }
+    
+  }
+
+  // Returning nothing from this function would have the same effect.
+  return NODE_ACCESS_IGNORE;
+}
